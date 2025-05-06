@@ -1,2 +1,1 @@
-file:///C:/Users/tleva/OneDrive/Изображения/Пленка/Снимок%20экрана%202025-05-06%20183727.png
-http://172.18.192.1:10479/index.html
+![image](https://github.com/user-attachments/assets/fca37112-a251-4746-ba07-822d9a91e604)
