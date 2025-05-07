@@ -1,13 +1,11 @@
 package ru.netology.test;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.Keys;
-import ru.netology.data.DataGenerator;
+import ru.netology.test.data.DataGenerator;
 
 import java.time.Duration;
 
@@ -15,7 +13,7 @@ import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
-import static ru.netology.data.DataGenerator.generateDate;
+import static ru.netology.test.data.DataGenerator.generateDate;
 
 class CardDeliveryTest {
 
@@ -44,43 +42,27 @@ class CardDeliveryTest {
         String firstMeetingDate = generateDate(daysToAddForFirstMeeting);
         int daysToAddForSecondMeeting = 7;
         String secondMeetingDate = generateDate(daysToAddForSecondMeeting);
-
         $("[data-test-id=city] input").setValue(validUser.getCity());
-
-        // Устанавливаем первую дату
         SelenideElement dateInput = $("[data-test-id=date] input");
         dateInput.doubleClick();
         dateInput.sendKeys(Keys.BACK_SPACE);
         dateInput.setValue(firstMeetingDate);
-        System.out.println("Введена первая дата: " + firstMeetingDate + " | В поле: " + dateInput.getValue());
-
         $("[data-test-id=name] input").setValue(validUser.getName());
         $("[data-test-id=phone] input").setValue(validUser.getPhone());
         $("[data-test-id=agreement]").click();
         $(byText("Запланировать")).click();
-
-        // Ожидание уведомления об успехе
         $("[data-test-id=success-notification]").shouldBe(visible, Duration.ofSeconds(15));
         $("[data-test-id=success-notification] .notification__content")
                 .shouldHave(exactText("Встреча успешно запланирована на " + firstMeetingDate))
                 .shouldBe(visible);
-
-        // Перепланировка
         dateInput.doubleClick();
         dateInput.sendKeys(Keys.BACK_SPACE);
         dateInput.setValue(secondMeetingDate);
-        System.out.println("Введена вторая дата: " + secondMeetingDate + " | В поле: " + dateInput.getValue());
-
         $(byText("Запланировать")).click();
-
-        // Ожидаем уведомление о перепланировке
         $("[data-test-id='replan-notification'] .notification__content")
                 .shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?"))
                 .shouldBe(visible);
-
         $("[data-test-id='replan-notification'] button").click();
-
-        // Проверка успеха перепланировки
         $("[data-test-id=success-notification]").shouldBe(visible, Duration.ofSeconds(15));
         $("[data-test-id=success-notification] .notification__content")
                 .shouldHave(exactText("Встреча успешно запланирована на " + secondMeetingDate))
